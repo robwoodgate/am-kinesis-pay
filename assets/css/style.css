@@ -1,0 +1,79 @@
+#kinesis-pay-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: min-content;
+  background-color: white;
+  border-radius: 4px;
+  padding: 48px 32px;
+}
+.kinesis-pay-logo-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.kinesis-pay-logo-title {
+  font-size: 20px;
+  text-transform: uppercase;
+}
+.kinesis-pay-instructions {
+  text-align: center;
+  line-height: 20px;
+}
+.kinesis-pay-expires {
+  text-align: center;
+  line-height: 1.2rem;
+  font-size: 0.9rem;
+}
+.kinesis-pay-payment-info {
+  display: flex;
+  margin-bottom: 16px;
+}
+#copy-button {
+  display: inline-block;
+  color: #FFFFFF;
+  background-color: #017DE8;
+  border-radius: 4px;
+  padding: 0px 16px;
+}
+#payment-id-text {
+  display: inline-block;
+  color: #0D1D2C;
+  background-color: #FFFFFF;
+  box-shadow: none;
+  border-radius: 4px;
+  border: 1px solid #E5E7E8;
+  padding: 4px 12px;
+}
+
+.payment_method_kinesis-pay img {
+  height: 30px;
+  width: 30px;
+}
+
+.payment_method_kinesis-pay label {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.kinesis-pay-price-preview {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.kinesis-pay-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.kinesis-pay-price {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
