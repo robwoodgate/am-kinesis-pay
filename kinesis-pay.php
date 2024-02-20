@@ -435,7 +435,7 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
 
         // Decode, check and save payment ID
         $body = json_decode($resp->getBody(), true);
-        $status = $body['status'] ?? null;isset($response->status) && $response->status === 'processed';
+        $status = $body['status'] ?? null;
         if ('processed' != $status) {
             throw new Am_Exception_InternalError('Payment not approved. '.$resp->getBody());
         }
