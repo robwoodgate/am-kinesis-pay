@@ -35,6 +35,7 @@
 #copy-button {
   display: inline-block;
   color: #FFFFFF;
+  background: none;
   background-color: #017DE8;
   border-radius: 4px;
   padding: 0px 16px;
