@@ -81,7 +81,7 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
 
     public function _initSetupForm(Am_Form_Setup $form): void
     {
-        $form->addSecretText('merchant_id', ['class' => 'am-el-wide'])
+        $form->addText('merchant_id', ['class' => 'am-el-wide'])
             ->setLabel("Merchant ID\n".'From the Merchant Profile Box in the <a href="https://kms.kinesis.money/merchant/dashboard" target="_blank">Merchant menu</a> menu of your Kinesis account.')
             ->addRule('required')
         ;
@@ -91,7 +91,7 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
             ->addRule('required')
         ;
 
-        $form->addText('secret_token', ['class' => 'am-el-wide'])
+        $form->addSecretText('secret_token', ['class' => 'am-el-wide'])
             ->setLabel("Merchant Secret Token\n".'Via the "Merchant API Keys" link in the <a href="https://kms.kinesis.money/merchant/dashboard" target="_blank">Merchant menu</a> menu of your Kinesis account.')
             ->addRule('required')
         ;
