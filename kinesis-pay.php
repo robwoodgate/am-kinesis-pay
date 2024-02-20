@@ -147,12 +147,12 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
         $a->form = <<<CUT
             <div id="kinesis-pay-content">
                 <div class="kinesis-pay-logo-wrapper">
-                    <img src="{$img_base}Kinesis-Pay-logo.svg" style="width: auto; height: 48px;">
+                    <img src="{$img_base}Kinesis-Pay-logo.png" style="width: auto; height: 48px;">
                     <span class="kinesis-pay-logo-title">Pay with K-Pay</span>
                 </div>
                 <span class="kinesis-pay-instructions">Scan the QR code with the Kinesis mobile app to complete the payment
                     <img style="display: inline-block; position: relative; top: 3px; width: 16px; height: 16px;"
-                        src="{$img_base}Scan-QRCode.svg">
+                        src="{$img_base}Scan-QRCode.png">
                 </span>
                 <img style="display: block; width: 200px;max-height: 200px;"
                     src="https://chart.googleapis.com/chart?chs=150x150&amp;cht=qr&amp;chl={$kms_url}&amp;choe=UTF-8">
