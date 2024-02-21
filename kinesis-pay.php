@@ -105,21 +105,28 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
     public function _process($invoice, $request, $result): void
     {
         // Get KAU and KAG amounts
-        $kau_rate = $this->getExchangeRate('KAU', $invoice->currency);
-        $kag_rate = $this->getExchangeRate('KAG', $invoice->currency);
+        // $kau_rate = $this->getExchangeRate('KAU', $invoice->currency);
+        // $kag_rate = $this->getExchangeRate('KAG', $invoice->currency);
         $total = Am_Currency::moneyRound($invoice->first_total, $invoice->currency);
 
         // Send request for a payment ID
         $params = [
             'globalMerchantId' => $this->getConfig('merchant_id'),
-            'paymentKauAmount' => number_format($total / $kau_rate, 5, '.', ''),
-            'paymentKagAmount' => number_format($total / $kag_rate, 5, '.', ''),
+            // 'paymentKauAmount' => number_format($total / $kau_rate, 5, '.', ''),
+            // 'paymentKagAmount' => number_format($total / $kag_rate, 5, '.', ''),
             'amount' => $total,
             'amountCurrency' => $invoice->currency,
         ];
         $resp = $this->_sendRequest('/api/merchants/payment', $params, 'GET PAYMENT ID');
         if (!in_array($resp->getStatus(), [200, 201])) {
-            throw new Am_Exception_InputError($resp->getBody());
+            $level = (int) floor($resp->getStatus() / 100);
+            // 4XX - Client errors, show API error message onscreen
+            // as these can be instructive (eg: minimum order amount)
+            if (4 === $level) {
+                throw new Am_Exception_InputError($resp->getBody());
+            }
+            // Show a generic error in all other cases
+            throw new Am_Exception_InputError('Failed connect to Kinesis. Please try later.');
         }
 
         // Decode, check and save payment ID
