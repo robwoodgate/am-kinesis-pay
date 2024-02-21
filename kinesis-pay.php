@@ -309,7 +309,8 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
             <strong>Kinesis Pay Plugin v{$version}</strong>
             Kinesis Pay lets your customers pay for one-time purchases using Gold and Silver.
 
-            If you do not already have a Kinesis Money account, <a href="https://kms.kinesis.money/signup/robertw866">register here</a>.
+            If you do not already have a Kinesis Money account, please <a target="_blank" href="https://kms.kinesis.money/signup/robertw534">register using my referral link</a>.
+            You will then be eligible to get 1/2 KAG once you meet the verification and trade requirements.
 
             <strong>Instructions</strong>
 
@@ -345,7 +346,7 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
      *
      * @return HTTP_Request2_Response KPay server response
      */
-    public function _sendRequest(
+    protected function _sendRequest(
         $url,
         ?array $params = null,
         ?string $logTitle = null,
