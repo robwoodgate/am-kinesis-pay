@@ -126,7 +126,7 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
                 throw new Am_Exception_InputError($resp->getBody());
             }
             // Show a generic error in all other cases
-            throw new Am_Exception_InputError('Failed connect to Kinesis. Please try later.');
+            throw new Am_Exception_InputError('Failed to connect to Kinesis. Please try later.');
         }
 
         // Decode, check and save payment ID
