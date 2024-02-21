@@ -17,7 +17,7 @@
 class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
 {
     public const PLUGIN_STATUS = self::STATUS_BETA;
-    public const PLUGIN_REVISION = '1.0';
+    public const PLUGIN_REVISION = '1.1';
     public const PAYMENT_ID = 'kinesis-pay-payment_id';
     public const API_BASE_URL = 'https://apip.kinesis.money';
     public const KMS_BASE_URL = 'https://kms.kinesis.money';
