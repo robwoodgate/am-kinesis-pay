@@ -282,7 +282,7 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
                 $transaction = new Am_Paysystem_KinesisPay_Transaction(
                     $this,
                     $request,
-                    $response,
+                    $resp,
                     $invokeArgs
                 );
                 $transaction->setInvoiceLog($invoiceLog);
