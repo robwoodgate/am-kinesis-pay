@@ -76,6 +76,10 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
 
     public function getSupportedCurrencies()
     {
+        // Temporary measure until issue with API currency conversion is fixed
+        // @see https://github.com/bullioncapital/kinesis-pay-woocommerce/issues/1
+        return ['USD'];
+
         return ['USD', 'EUR', 'GBP', 'AUD', 'CAD', 'CHF', 'CNH', 'HKD', 'IDR', 'JPY', 'NZD', 'SGD', 'AED'];
     }
 
