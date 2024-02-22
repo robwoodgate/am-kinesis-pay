@@ -17,7 +17,8 @@
 class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
 {
     public const PLUGIN_STATUS = self::STATUS_BETA;
-    public const PLUGIN_REVISION = '1.1';
+    public const PLUGIN_REVISION = '1.2';
+    public const AMOUNT_PAID = 'kinesis-pay-amount_paid';
     public const PAYMENT_ID = 'kinesis-pay-payment_id';
     public const API_BASE_URL = 'https://apip.kinesis.money';
     public const KMS_BASE_URL = 'https://kms.kinesis.money';
@@ -27,6 +28,17 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
 
     public function init(): void
     {
+        // Add Payment amount/currency to invoice for reference
+        $this->getDi()->blocks->add(
+            'admin/user/invoice/details',
+            new Am_Block_Base('KPay Amount Paid', 'kinesis-pay-paid', $this, function (Am_View $v) {
+                $paid = $v->invoice->data()->get(static::AMOUNT_PAID);
+                if ($paid && $v->invoice->paysys_id == $this->getId()) {
+                    return 'KPay Amount: <a href="https://kms.kinesis.money/merchant/dashboard">'.$paid.'</a>';
+                }
+            })
+        );
+
         // We shouldn't *really* need this, but if the customer sneakily navigates
         // to the thanks page, we can at least continue to poll for payment status
         $this->getDi()->blocks->add(
@@ -259,7 +271,7 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
 
             // Make request for status, log every 10th request
             $logTitle = (0 == $pcount % 10) ? "POLL STATUS #{$pcount}: {$txn_id}" : '';
-            $logTitle = "POLL STATUS #{$pcount}: {$txn_id}";
+            // $logTitle = "POLL STATUS #{$pcount}: {$txn_id}";
             $resp = $this->_sendRequest(
                 "/api/merchants/payment/id/sdk/{$txn_id}",
                 null,
@@ -274,16 +286,16 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
                 );
             }
 
-            // Handle processed payment
-            // We are effectively mimicking an "IPN" call here and
-            // performing the standard action handling via transactions
+            // Process payment if it is marked as processed at Kinesis
+            // We are effectively mimicking an "IPN" call here by passing in
+            // the Kinesis status response and handling it as a transaction
             $body = json_decode($resp->getBody(), true);
             if ('processed' === $body['status']) {
                 $invoiceLog = $this->_logDirectAction($request, $resp, $invokeArgs);
                 $transaction = new Am_Paysystem_KinesisPay_Transaction(
                     $this,
-                    $request,
-                    $resp,
+                    $request, // our status polling request
+                    $resp,    // the status response from Kinesis
                     $invokeArgs
                 );
                 $transaction->setInvoiceLog($invoiceLog);
@@ -452,6 +464,12 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
         if ('processed' != $status) {
             throw new Am_Exception_InternalError('Payment not approved. '.$resp->getBody());
         }
+
+        // Save the payment amount to the invoice
+        $currency = $body['paymentCurrency'];
+        $amount = ('KAU' == $currency) ? $body['paymentKauAmount'] : $body['paymentKagAmount'];
+        $invoice->data()->set(static::AMOUNT_PAID, $amount . ' ' . $currency)->update();
+
     }
 }
 
@@ -469,8 +487,11 @@ class Am_Paysystem_KinesisPay_Transaction extends Am_Paysystem_Transaction_Incom
 
     public function validateStatus()
     {
+        // We need to look at the response we attached to this transaction
+        // not the incoming request (which is our status polling request)
         $body = json_decode($this->response->getBody(), true);
-        $this->log->add("Transaction Body: ".$this->response->getBody());
+        $this->log->add('KPAY RESPONSE: '.$this->response->getBody());
+
         return 'processed' === $body['status'];
     }
 
