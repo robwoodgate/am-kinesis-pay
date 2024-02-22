@@ -468,7 +468,7 @@ class Am_Paysystem_KinesisPay_Transaction extends Am_Paysystem_Transaction_Incom
 
     public function validateStatus()
     {
-        $body = json_decode($this->request->getRawBody(), true);
+        $body = json_decode($this->response->getBody(), true);
 
         return 'processed' === $body['status'];
     }
