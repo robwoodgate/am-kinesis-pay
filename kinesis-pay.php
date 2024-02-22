@@ -34,7 +34,7 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
             new Am_Block_Base('KPay Amount Paid', 'kinesis-pay-paid', $this, function (Am_View $v) {
                 $paid = $v->invoice->data()->get(static::AMOUNT_PAID);
                 if ($paid && $v->invoice->paysys_id == $this->getId()) {
-                    return 'KPay Amount: <a href="https://kms.kinesis.money/merchant/dashboard">'.$paid.'</a>';
+                    return 'KPay Amount: <a target="_blank" href="https://kms.kinesis.money/merchant/dashboard">'.$paid.'</a>';
                 }
             })
         );
