@@ -259,6 +259,7 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
 
             // Make request for status, log every 10th request
             $logTitle = (0 == $pcount % 10) ? "POLL STATUS #{$pcount}: {$txn_id}" : '';
+            $logTitle = "POLL STATUS #{$pcount}: {$txn_id}";
             $resp = $this->_sendRequest(
                 "/api/merchants/payment/id/sdk/{$txn_id}",
                 null,
