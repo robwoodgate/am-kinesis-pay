@@ -9,7 +9,7 @@
  * ============================================================================
  * Revision History:
  * ----------------
- * 2024-02-22   v1.2    R Woodgate  First public release
+ * 2024-02-23   v1.3    R Woodgate  First public release
  * 2024-02-19   v1.0    R Woodgate  Plugin Created
  * ============================================================================.
  *
@@ -18,7 +18,7 @@
 class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
 {
     public const PLUGIN_STATUS = self::STATUS_BETA;
-    public const PLUGIN_REVISION = '1.2';
+    public const PLUGIN_REVISION = '1.3';
     public const AMOUNT_PAID = 'kinesis-pay-amount_paid';
     public const PAYMENT_ID = 'kinesis-pay-payment_id';
     public const API_BASE_URL = 'https://apip.kinesis.money';
@@ -112,6 +112,11 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
             ->setLabel("Merchant Secret Token\n".'Via the "Merchant API Keys" link in the <a href="https://kms.kinesis.money/merchant/dashboard" target="_blank">Merchant menu</a> menu of your Kinesis account.')
             ->addRule('required')
         ;
+
+        // Add Extra fields
+        $fs = $this->getExtraSettingsFieldSet($form);
+        $fs->addText('percentage', ['size' => 4])->setLabel(___("Price Adjustment (% multiplier)\nAllows you to offer a discount (eg: 85 = 15% discount) or premium (eg: 120 = 20% premium) for KPay payments. Default: 100 (no adjustment)."));
+        $form->setDefault('percentage', '100');
     }
 
     public function isConfigured()
@@ -122,9 +127,15 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
     public function _process($invoice, $request, $result): void
     {
         // Get KAU and KAG amounts
+        // * This was implemented because it is in the original "SDK", but
+        // * it is not actually used by the API, so is disabled for effeciency
         // $kau_rate = $this->getExchangeRate('KAU', $invoice->currency);
         // $kag_rate = $this->getExchangeRate('KAG', $invoice->currency);
-        $total = Am_Currency::moneyRound($invoice->first_total, $invoice->currency);
+
+        // Calculate adjusted total to pay
+        $multiplier = abs($this->getConfig('percentage', 100)) / 100;
+        $total = $invoice->first_total * $multiplier;
+        $total = Am_Currency::moneyRound($total, $invoice->currency);
 
         // Send request for a payment ID
         $params = [
@@ -469,8 +480,7 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
         // Save the payment amount to the invoice
         $currency = $body['paymentCurrency'];
         $amount = ('KAU' == $currency) ? $body['paymentKauAmount'] : $body['paymentKagAmount'];
-        $invoice->data()->set(static::AMOUNT_PAID, $amount . ' ' . $currency)->update();
-
+        $invoice->data()->set(static::AMOUNT_PAID, $amount.' '.$currency)->update();
     }
 }
 
