@@ -9,6 +9,7 @@
  * ============================================================================
  * Revision History:
  * ----------------
+ * 2024-04-08   v2.0    R Woodgate  Replace defunct Google QR Code API
  * 2024-02-23   v1.3    R Woodgate  First public release
  * 2024-02-19   v1.0    R Woodgate  Plugin Created
  * ============================================================================.
@@ -18,7 +19,7 @@
 class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
 {
     public const PLUGIN_STATUS = self::STATUS_BETA;
-    public const PLUGIN_REVISION = '1.3';
+    public const PLUGIN_REVISION = '2.0';
     public const AMOUNT_PAID = 'kinesis-pay-amount_paid';
     public const PAYMENT_ID = 'kinesis-pay-payment_id';
     public const API_BASE_URL = 'https://apip.kinesis.money';
@@ -135,7 +136,7 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
         // Calculate adjusted total to pay
         $multiplier = abs($this->getConfig('percentage', 100)) / 100;
         $total = $invoice->first_total * $multiplier;
-        $total = Am_Currency::moneyRound($total, $invoice->currency);
+        $total = number_format($total, 2, '.', '');
 
         // Send request for a payment ID
         $params = [
@@ -151,7 +152,9 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
             // 4XX - Client errors, show API error message onscreen
             // as these can be instructive (eg: minimum order amount)
             if (4 === $level) {
-                throw new Am_Exception_InputError($resp->getBody());
+                $payload = json_decode($resp->getBody());
+
+                throw new Am_Exception_InputError($payload->message);
             }
             // Show a generic error in all other cases
             throw new Am_Exception_InputError('Failed to connect to Kinesis. Please try later.');
@@ -167,6 +170,7 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
 
         // Open pay page
         $kms_url = static::KMS_BASE_URL.'?paymentId='.$gpid;
+        $qrc_url = urlencode($kms_url);
         $assets_url = $this->getDi()->url(
             'application/default/plugins/payment/'.$this->getId().'/assets'
         );
@@ -189,8 +193,8 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
                     <img style="display: inline-block; position: relative; top: 3px; width: 16px; height: 16px;"
                         src="{$img_base}Scan-QRCode.png">
                 </span>
-                <img style="display: block; width: 200px;max-height: 200px;"
-                    src="https://chart.googleapis.com/chart?chs=150x150&amp;cht=qr&amp;chl={$kms_url}&amp;choe=UTF-8">
+                <img style="display: block; width: 200px;max-height: 200px;margin:10px 0;"
+                    src="https://api.qrserver.com/v1/create-qr-code/?data={$qrc_url}&size=150x150">
                 <a style="display: block; white-space: nowrap; text-decoration: none; color: #017DE8;"
                     href="{$kms_url}" target="_blank">OR make the payment using the KMS</a>
                 <div style="display: flex; justify-content: space-between; gap: 8px; flex-direction: column; align-items: center; margin-top: 24px;">
@@ -409,6 +413,7 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
             $headers['Content-Type'] = 'application/json';
         }
         $req->setHeader($headers);
+        // $req->setHeader('User-Agent'); // unsets it
 
         // Add params and send
         if (!is_null($params)) {
