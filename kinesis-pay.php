@@ -9,7 +9,7 @@
  * ============================================================================
  * Revision History:
  * ----------------
- * 2024-04-08   v2.0    R Woodgate  Replace defunct Google QR Code API
+ * 2024-04-11   v2.1    R Woodgate  Replace defunct Google QR Code API
  * 2024-02-23   v1.3    R Woodgate  First public release
  * 2024-02-19   v1.0    R Woodgate  Plugin Created
  * ============================================================================.
@@ -19,7 +19,7 @@
 class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
 {
     public const PLUGIN_STATUS = self::STATUS_BETA;
-    public const PLUGIN_REVISION = '2.0';
+    public const PLUGIN_REVISION = '2.1';
     public const AMOUNT_PAID = 'kinesis-pay-amount_paid';
     public const PAYMENT_ID = 'kinesis-pay-payment_id';
     public const API_BASE_URL = 'https://apip.kinesis.money';
@@ -170,12 +170,12 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
 
         // Open pay page
         $kms_url = static::KMS_BASE_URL.'?paymentId='.$gpid;
-        $qrc_url = urlencode($kms_url);
         $assets_url = $this->getDi()->url(
             'application/default/plugins/payment/'.$this->getId().'/assets'
         );
         $img_base = $assets_url.'/images/';
         $css_url = $assets_url.'/css/style.css';
+        $qrc_url = $assets_url.'/js/qrcode.min.js';
         $success_url = $this->getReturnUrl();
         $cancel_url = $this->getCancelUrl();
         $status_url = $this->getPluginUrl('status', [
@@ -186,28 +186,34 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
         $a->form = <<<CUT
             <div id="kinesis-pay-content">
                 <div class="kinesis-pay-logo-wrapper">
-                    <img src="{$img_base}Kinesis-Pay-logo.png" style="width: auto; height: 48px;">
+                    <img id="kpay-logo" src="{$img_base}Kinesis-Pay-logo.png">
                     <span class="kinesis-pay-logo-title">Pay with K-Pay</span>
                 </div>
                 <span class="kinesis-pay-instructions">Scan the QR code with the Kinesis mobile app to complete the payment
-                    <img style="display: inline-block; position: relative; top: 3px; width: 16px; height: 16px;"
-                        src="{$img_base}Scan-QRCode.png">
+                    <img id="kpay-instruction-img" src="{$img_base}Scan-QRCode.png">
                 </span>
-                <img style="display: block; width: 200px;max-height: 200px;margin:10px 0;"
-                    src="https://api.qrserver.com/v1/create-qr-code/?data={$qrc_url}&size=150x150">
-                <a style="display: block; white-space: nowrap; text-decoration: none; color: #017DE8;"
-                    href="{$kms_url}" target="_blank">OR make the payment using the KMS</a>
-                <div style="display: flex; justify-content: space-between; gap: 8px; flex-direction: column; align-items: center; margin-top: 24px;">
+                <div id="kpay-qrcode"></div>
+                <a id="kpay-payment-link" href="{$kms_url}" target="_blank">OR make the payment using the KMS</a>
+                <div class="kinesis-pay-payment-id-copy-wrapper">
                     <span>Payment ID</span>
                     <div class="kinesis-pay-payment-info">
                         <input id="payment-id-text" type="text" value="{$gpid}" id="payment_id_value" readonly>
                         <button id="copy-button" onclick="copyPaymentId()">Copy</button>
                     </div>
                     <span class="kinesis-pay-expires">Payment ID expires in <span id="kinesis-pay-expires">10 minutes</span></span>
-                    <a style="display: block; white-space: nowrap; text-decoration: none; color: #017DE8;" href="{$cancel_url}">Cancel</a>
+                    <a id="payment-cancel-link" href="{$cancel_url}">Cancel</a>
                 </div>
             </div>
             <script>
+                const qrcode_elem = document.getElementById("kpay-qrcode");
+                new QRCode(qrcode_elem, {
+                    text: "{$kms_url}",
+                    width: 160,
+                    height: 160,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.L
+                });
                 function copyPaymentId() {
                     var copyText = document.getElementById("payment-id-text");
                     copyText.select();
@@ -259,6 +265,7 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
         // Add in CSS
         $v = new Am_View();
         $v->headLink()->appendStylesheet($css_url);
+        $v->headScript()->appendFile($qrc_url);
 
         $result->setAction($a);
     }

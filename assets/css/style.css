@@ -1,5 +1,6 @@
 #kinesis-pay-content {
   display: flex;
+  gap: 16px;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -7,6 +8,23 @@
   background-color: white;
   border-radius: 4px;
   padding: 48px 0;
+}
+#kpay-logo {
+  width: auto;
+  height: 48px;
+}
+#kpay-instruction-img {
+  display: inline-block;
+  position: relative;
+  top: 3px;
+  width: 16px;
+  height: 16px;
+}
+#kpay-payment-link {
+  display: block;
+  white-space: nowrap;
+  text-decoration: none;
+  color: #017DE8;
 }
 .kinesis-pay-logo-wrapper {
   display: flex;
@@ -19,18 +37,28 @@
   font-size: 20px;
   text-transform: uppercase;
 }
+#kpay-qrcode {
+  display: flex;
+  justify-content: center;
+  width: 200px;
+  max-height: 200px;
+}
 .kinesis-pay-instructions {
   text-align: center;
   line-height: 20px;
 }
-.kinesis-pay-expires {
-  text-align: center;
-  line-height: 1.2rem;
-  font-size: 0.9rem;
-}
 .kinesis-pay-payment-info {
   display: flex;
   margin-bottom: 16px;
+}
+.kinesis-pay-payment-id-copy-wrapper {
+  display: flex;
+  justify-content:
+  space-between;
+  gap: 8px;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 12px;
 }
 #copy-button {
   display: inline-block;
@@ -49,32 +77,14 @@
   border: 1px solid #E5E7E8;
   padding: 4px 12px;
 }
-
-.payment_method_kinesis-pay img {
-  height: 30px;
-  width: 30px;
+#payment-cancel-link {
+  display: block;
+  white-space: nowrap;
+  text-decoration: none;
+  color: #017DE8;
 }
-
-.payment_method_kinesis-pay label {
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-}
-
-.kinesis-pay-price-preview {
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
-}
-
-.kinesis-pay-container {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.kinesis-pay-price {
-  display: flex;
-  flex-direction: row;
-  gap: 8px;
+.kinesis-pay-expires {
+  text-align: center;
+  line-height: 1.2rem;
+  font-size: 0.9rem;
 }

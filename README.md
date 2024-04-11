@@ -30,3 +30,8 @@ Copyright 2024 (c) R Woodgate, Cogmentis Ltd. All Rights Reserved
 For support (to report bugs and request new features) visit:
 
 <https://www.cogmentis.com/>
+
+### CREDITS
+
+QRCode.js is copyright (c) 2012 davidshimjs and is licensed under the MIT License
+https://davidshimjs.github.io/qrcodejs/
