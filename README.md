@@ -1,4 +1,4 @@
-# Kinesis Pay Plugin
+# Kinesis Pay Plugin for aMember Pro
 
 Kinesis Pay lets your customers pay for purchases using Gold and Silver.
 
@@ -9,7 +9,7 @@ Register here: <https://kms.kinesis.money/signup/robertw866>
 
 ### REQUIREMENTS
 
-This plugin requires aMember v6.1 or higher and PHP 7.2 or higher
+This plugin requires [aMember](https://www.cogmentis.com/go/amember) v6.x and PHP 7.2 or higher
 
 ### INSTALLATION
 
