@@ -3,12 +3,13 @@
  * Kinesis Pay
  * Copyright R Woodgate, Cogmentis Ltd.
  *
- * @desc Kinesis Pay lets you accept one-off payments in Gold and Silver
+ * @desc Kinesis Pay lets you accept payments in Gold and Silver
  */
 /**
  * ============================================================================
  * Revision History:
  * ----------------
+ * 2024-07-13   v3.0    R Woodgate  Enables manual rebills, updated for v2 API
  * 2024-04-11   v2.1    R Woodgate  Replace defunct Google QR Code API
  * 2024-02-23   v1.3    R Woodgate  First public release
  * 2024-02-19   v1.0    R Woodgate  Plugin Created
@@ -16,17 +17,17 @@
  *
  * @am_payment_api 6.0
  */
-class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
+class Am_Paysystem_KinesisPay extends Am_Paysystem_ManualRebill
 {
     public const PLUGIN_STATUS = self::STATUS_BETA;
-    public const PLUGIN_REVISION = '2.1';
+    public const PLUGIN_REVISION = '3.0';
     public const AMOUNT_PAID = 'kinesis-pay-amount_paid';
     public const PAYMENT_ID = 'kinesis-pay-payment_id';
     public const API_BASE_URL = 'https://apip.kinesis.money';
     public const KMS_BASE_URL = 'https://kms.kinesis.money';
 
     protected $defaultTitle = 'Kinesis Pay';
-    protected $defaultDescription = 'Pay with Gold or Silver with Kinesis Pay';
+    protected $defaultDescription = 'Pay with Gold or Silver';
 
     public function init(): void
     {
@@ -83,18 +84,11 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
         }
     }
 
-    public function getRecurringType()
-    {
-        return self::REPORTS_NOT_RECURRING;
-    }
-
     public function getSupportedCurrencies()
     {
-        // Temporary measure until issue with API currency conversion is fixed
+        // Kinesis v2 API only allows Merchant account currency to be used
         // @see https://github.com/bullioncapital/kinesis-pay-woocommerce/issues/1
-        return ['USD'];
-
-        return ['USD', 'EUR', 'GBP', 'AUD', 'CAD', 'CHF', 'CNH', 'HKD', 'IDR', 'JPY', 'NZD', 'SGD', 'AED'];
+        return [$this->getConfig('currency', 'USD')];
     }
 
     public function _initSetupForm(Am_Form_Setup $form): void
@@ -114,6 +108,13 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
             ->addRule('required')
         ;
 
+        $currency = $form->addSelect('currency', ['size' => 1, 'class' => 'am-combobox'])
+            ->setLabel(___("Merchant Preference Currency\n".
+                'The currency set in your Kinesis Merchant account. Default: USD'))
+            ->loadOptions(Am_Currency::getFullList())
+        ;
+        $form->setDefault('currency', 'USD');
+
         // Add Extra fields
         $fs = $this->getExtraSettingsFieldSet($form);
         $fs->addText('percentage', ['size' => 4])->setLabel(___("Price Adjustment (% multiplier)\nAllows you to offer a discount (eg: 85 = 15% discount) or premium (eg: 120 = 20% premium) for KPay payments. Default: 100 (no adjustment)."));
@@ -129,7 +130,7 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
     {
         // Get KAU and KAG amounts
         // * This was implemented because it is in the original "SDK", but
-        // * it is not actually used by the API, so is disabled for effeciency
+        // * it is not actually used in the V2 API, so is disabled for efficiency
         // $kau_rate = $this->getExchangeRate('KAU', $invoice->currency);
         // $kag_rate = $this->getExchangeRate('KAG', $invoice->currency);
 
@@ -141,10 +142,11 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
         // Send request for a payment ID
         $params = [
             'globalMerchantId' => $this->getConfig('merchant_id'),
+            'amount' => $total,
+            // The following are no longer used in the V2 API:
             // 'paymentKauAmount' => number_format($total / $kau_rate, 5, '.', ''),
             // 'paymentKagAmount' => number_format($total / $kag_rate, 5, '.', ''),
-            'amount' => $total,
-            'amountCurrency' => $invoice->currency,
+            // 'amountCurrency' => $invoice->currency,
         ];
         $resp = $this->_sendRequest('/api/merchants/payment', $params, 'GET PAYMENT ID');
         if (!in_array($resp->getStatus(), [200, 201])) {
@@ -152,9 +154,14 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
             // 4XX - Client errors, show API error message onscreen
             // as these can be instructive (eg: minimum order amount)
             if (4 === $level) {
-                $payload = json_decode($resp->getBody());
+                $payload = $resp->getBody();
+                // Errors seems to be plain text in V2 API, but used to be JSON
+                // so double check the payload isn't a JSON message
+                if ($obj = json_decode($payload)) {
+                    $payload = $obj->message;
+                }
 
-                throw new Am_Exception_InputError($payload->message);
+                throw new Am_Exception_InputError((string)$payload);
             }
             // Show a generic error in all other cases
             throw new Am_Exception_InputError('Failed to connect to Kinesis. Please try later.');
@@ -354,7 +361,7 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_Abstract
 
         return <<<README
             <strong>Kinesis Pay Plugin v{$version}</strong>
-            Kinesis Pay lets your customers pay for one-time purchases using Gold and Silver.
+            Kinesis Pay lets your customers pay for purchases using Gold and Silver.
 
             If you do not already have a Kinesis Money account, please <a target="_blank" href="https://kms.kinesis.money/signup/robertw534">register using my referral link</a>.
             You will then be eligible to get 1/2 KAG once you meet the verification and trade requirements.
