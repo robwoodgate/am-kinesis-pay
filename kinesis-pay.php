@@ -1,19 +1,10 @@
 <?php
 /**
  * Kinesis Pay
- * Copyright R Woodgate, Cogmentis Ltd.
+ * Author: R Woodgate, Cogmentis Ltd.
+ * Author URI: https://www.cogmentis.com/.
  *
  * @desc Kinesis Pay lets you accept payments in Gold and Silver
- */
-/**
- * ============================================================================
- * Revision History:
- * ----------------
- * 2024-07-13   v3.0    R Woodgate  Enables manual rebills, updated for v2 API
- * 2024-04-11   v2.1    R Woodgate  Replace defunct Google QR Code API
- * 2024-02-23   v1.3    R Woodgate  First public release
- * 2024-02-19   v1.0    R Woodgate  Plugin Created
- * ============================================================================.
  *
  * @am_payment_api 6.0
  */
@@ -161,7 +152,7 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_ManualRebill
                     $payload = $obj->message;
                 }
 
-                throw new Am_Exception_InputError((string)$payload);
+                throw new Am_Exception_InputError((string) $payload);
             }
             // Show a generic error in all other cases
             throw new Am_Exception_InputError('Failed to connect to Kinesis. Please try later.');
@@ -376,15 +367,13 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_ManualRebill
 
             -------------------------------------------------------------------------------
 
-            Copyright 2024 (c) Rob Woodgate, Cogmentis Ltd. All Rights Reserved
+            Copyright 2024 (c) Rob Woodgate, Cogmentis Ltd.
 
-            This file may not be distributed unless permission is given by author.
+            This plugin is provided under the MIT License.
 
             This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING
             WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
-            For support (to report bugs and request new features) visit: <a href="https://www.cogmentis.com/">www.cogmentis.com</a>
-            <img src="https://www.cogmentis.com/lcimg/kinesis-pay.jpg" />
             -------------------------------------------------------------------------------
             README;
     }

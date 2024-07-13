@@ -1,6 +1,6 @@
 # Kinesis Pay Plugin
 
-Kinesis Pay lets your customers pay for one-time purchases using Gold and Silver.
+Kinesis Pay lets your customers pay for purchases using Gold and Silver.
 
 If you do not already have a Kinesis Money account, please register using my referral link below and you will be eligible to get 1/2 KAG once you meet the verification and trade requirements:
 
@@ -17,21 +17,18 @@ This plugin requires aMember v6.1 or higher and PHP 7.2 or higher
 
 2. Enable and configure the plugin in *aMember CP -> Setup/Configuration -> Plugins*
 
-### LICENCE
+### LICENCE / CREDITS
 
-The purchase of this plugin allows you to install it on any aMember site you personally own.
+This plugin is provided under the MIT License.
 
-The plugin files may not be distributed unless permission is given by author.
-
-This plugin is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
-Copyright 2024 (c) R Woodgate, Cogmentis Ltd. All Rights Reserved
-
-For support (to report bugs and request new features) visit:
+Copyright 2024 (c) Rob Woodgate, Cogmentis Ltd.
 
 <https://www.cogmentis.com/>
 
-### CREDITS
+Inspired by the Kinesis Pay WooCommerce plugin:
 
-QRCode.js is copyright (c) 2012 davidshimjs and is licensed under the MIT License
-https://davidshimjs.github.io/qrcodejs/
+<https://github.com/bullioncapital/kinesis-pay-woocommerce>
+
+QRCode.js is copyright (c) 2012 davidshimjs and is licensed under the MIT License:
+
+<https://davidshimjs.github.io/qrcodejs/>
