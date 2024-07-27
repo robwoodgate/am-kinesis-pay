@@ -11,7 +11,7 @@
 class Am_Paysystem_KinesisPay extends Am_Paysystem_ManualRebill
 {
     public const PLUGIN_STATUS = self::STATUS_BETA;
-    public const PLUGIN_REVISION = '3.0';
+    public const PLUGIN_REVISION = '3.1';
     public const AMOUNT_PAID = 'kinesis-pay-amount_paid';
     public const PAYMENT_ID = 'kinesis-pay-payment_id';
     public const API_BASE_URL = 'https://apip.kinesis.money';
@@ -119,6 +119,14 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_ManualRebill
 
     public function _process($invoice, $request, $result): void
     {
+        // Handle free trial: KPay doesn't handle free transactions, so
+        // we simply bypass KPay and activate the subscription here
+        if (doubleval($invoice->first_total) <= 0 && $invoice->isFirstPayment()) {
+            $result->setSuccess(new Am_Paysystem_Transaction_Free($this));
+
+            return;
+        }
+
         // Get KAU and KAG amounts
         // * This was implemented because it is in the original "SDK", but
         // * it is not actually used in the V2 API, so is disabled for efficiency
