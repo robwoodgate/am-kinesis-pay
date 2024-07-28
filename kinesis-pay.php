@@ -11,7 +11,7 @@
 class Am_Paysystem_KinesisPay extends Am_Paysystem_ManualRebill
 {
     public const PLUGIN_STATUS = self::STATUS_BETA;
-    public const PLUGIN_REVISION = '3.1';
+    public const PLUGIN_REVISION = '3.2';
     public const AMOUNT_PAID = 'kinesis-pay-amount_paid';
     public const PAYMENT_ID = 'kinesis-pay-payment_id';
     public const API_BASE_URL = 'https://apip.kinesis.money';
@@ -135,7 +135,8 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_ManualRebill
 
         // Calculate adjusted total to pay
         $multiplier = abs($this->getConfig('percentage', 100)) / 100;
-        $total = $invoice->first_total * $multiplier;
+        $total = $invoice->isFirstPayment() ? $invoice->first_total : $invoice->second_total;
+        $total = $total * $multiplier;
         $total = number_format($total, 2, '.', '');
 
         // Send request for a payment ID
@@ -381,6 +382,8 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_ManualRebill
 
             This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING
             WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+            <strong>Like this plugin?</strong> <a href="https://btcpay.cogmentis.com/apps/359ErQmassvNesyXYkLqD3JU4SP2/pos" target="_blank">Buy me a coffee</a>
 
             -------------------------------------------------------------------------------
             README;
