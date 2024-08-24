@@ -33,4 +33,4 @@ QRCode.js is copyright (c) 2012 davidshimjs and is licensed under the MIT Licens
 
 <https://davidshimjs.github.io/qrcodejs/>
 
-Buy me a coffee: https://btcpay.cogmentis.com/apps/359ErQmassvNesyXYkLqD3JU4SP2/pos
+Buy me a coffee: https://donate.cogmentis.com
