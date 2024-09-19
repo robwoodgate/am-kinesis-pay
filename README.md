@@ -23,7 +23,7 @@ This plugin is provided under the MIT License.
 
 Copyright 2024 (c) Rob Woodgate, Cogmentis Ltd.
 
-<https://www.cogmentis.com/>
+Visit my [aMember plugins](https://www.cogmentis.com/system/cart/) store for more great plugins.
 
 Inspired by the Kinesis Pay WooCommerce plugin:
 
