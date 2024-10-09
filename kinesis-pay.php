@@ -358,6 +358,8 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_ManualRebill
     public function getReadme()
     {
         $version = self::PLUGIN_REVISION;
+        $ilog_url = Am_Di::getInstance()->url('default/admin-logs/p/invoice');
+        $elog_url = Am_Di::getInstance()->url('default/admin-logs/');
 
         return <<<README
             <strong>Kinesis Pay Plugin v{$version}</strong>
@@ -373,6 +375,11 @@ class Am_Paysystem_KinesisPay extends Am_Paysystem_ManualRebill
             2. Enable the plugin at <strong>aMember Admin -&gt; Setup/Configuration -&gt; Plugins</strong>
 
             3. Configure the plugin at <strong>aMember Admin -&gt; Setup/Configuration -&gt; Kinesis Pay.</strong>
+
+            <strong>TROUBLESHOOTING</strong>
+            This plugin writes KPay responses to the aMember <a href="{$ilog_url}">Invoice log</a>.
+
+            In case of an error, please check there as well as in the aMember <a href="{$elog_url}">Error log</a>.
 
             -------------------------------------------------------------------------------
 
